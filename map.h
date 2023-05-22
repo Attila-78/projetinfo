@@ -11,8 +11,8 @@
 #define EPSILON 2
 
 // définition de la longueur et la largeur de la fenêtre de jeu
-#define WIDTH 800
-#define HEIGHT 800
+#define WIDTH SDL_WINDOW_FULLSCREEN_DESKTOP
+#define HEIGHT SDL_WINDOW_FULLSCREEN_DESKTOP
 
 // énumération des types de cases
 typedef enum Cell_type
@@ -37,6 +37,7 @@ typedef enum Cell_content
     CONTENT_FLOWER,
     CONTENT_ROCK,
     CONTENT_CRATE,
+    CONTENT_FENCE,
     CONTENT_PNJ,
     CONTENT_MONSTER,
 
