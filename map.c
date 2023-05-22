@@ -232,7 +232,7 @@ int map_renderer(int **map)
     SDL_Window *win = SDL_CreateWindow("Cy-Valley",
                                        SDL_WINDOWPOS_CENTERED,
                                        SDL_WINDOWPOS_CENTERED,
-                                       WIDTH, HEIGHT, SDL_WINDOW_ALLOW_HIGHDPI);
+                                       SDL_WINDOW_FULLSCREEN_DESKTOP, SDL_WINDOW_FULLSCREEN_DESKTOP, SDL_WINDOW_ALLOW_HIGHDPI);
 
     // Crée un message d'erreur si la fenêtre ne c'est pas bien crée
     if (win == NULL)
@@ -260,7 +260,29 @@ int map_renderer(int **map)
     SDL_Surface *surface_down_right_cell;
     SDL_Surface *surface_right_middle_cell;
 
-    // on crée ensuite une surface pour chaque sprite que l'on pourra afficher. On remplacera les surfaces précédemment citées
+    //on crée les rectangles dans lesquels nos surfaces iront
+    SDL_Rect *rect_up_left_cell = (400,400,800,800);
+    SDL_Rect *rect_up_middle_cell = (1200,400,800,800);
+    SDL_Rect *rect_up_right_cell = (2000,400,800,800);
+    SDL_Rect *rect_left_middle_cell = (400,1200,800,800);
+    SDL_Rect *rect_left_down_cell = (400,2000,800,800);
+    SDL_Rect *rect_middle_cell = (1200,1200,800,800);
+    SDL_Rect *rect_down_middle_cell = (1200,2000,800,800);
+    SDL_Rect *rect_down_right_cell = (2000,2000,800,800);
+    SDL_Rect *rect_right_middle_cell = (2000,1200,800,800);
+
+    //on assigne nos surfaces aux rectangles correspondant
+    int SDL_BlitSurface(surface_up_left_cell, NULL, surface_up_left_cell, rect_up_left_cell);
+    int SDL_BlitSurface(surface_up_middle_cell, NULL, surface_up_middle_cell, rect_up_middle_cell);
+    int SDL_BlitSurface(surface_up_right_cell, NULL, surface_up_right_cell, rect_up_right_cell);
+    int SDL_BlitSurface(surface_left_middle_cell, NULL, surface_left_middle_cell, rect_left_middle_cell);
+    int SDL_BlitSurface(surface_character, NULL, surface_character, rect_middle_cell);
+    int SDL_BlitSurface(surface_left_down_cell, NULL, surface_left_down_cell, rect_left_down_cell);
+    int SDL_BlitSurface(surface_down_middle_cell, NULL, surface_down_middle_cell, rect_down_middle_cell);
+    int SDL_BlitSurface(surface_down_right_cell, NULL, surface_down_right_cell, rect_down_right_cell);
+    int SDL_BlitSurface(rect_right_middle_cell, NULL, rect_right_middle_cell, rect_right_middle_cell);
+
+    // on crée ensuite une surface pour chaque< sprite que l'on pourra afficher. On remplacera les surfaces précédemment citées
     // par celle-ci selon l'emplacement du personnage pour éviter
     // de devoir les charger à chaque fois et perdre du temps
     SDL_Surface *surface_character_front_first_step = SDL_LoadBMP("./resources/Main-Character front first step.bmp");
@@ -283,7 +305,7 @@ int map_renderer(int **map)
     SDL_Surface *surface_Cell_Sand = SDL_LoadBMP("./resources/Cell_Sand.bmp");
     SDL_Surface *surface_Cell_Mud = SDL_LoadBMP("./resources/Cell_Mud.bmp");
     SDL_Surface *surface_Cell_Magma = SDL_LoadBMP("./resources/Cell_Magma.bmp");
-
+  
     // on vérifie que nos sprites ont été chargés sans encombre
     if (surface_character_front_first_step == NULL)
     {
