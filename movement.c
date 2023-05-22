@@ -4,6 +4,17 @@
 #include "../include/SDL.h"
 #include "map.h"
 
+// fonction qui amène la variable à 100 lorsque celle ci est <0 et qui l'amène à 0 lorsque celle ci est >100
+int equilibre(int n){
+    if (n<0){
+        n=SIZE_MAP-n;
+    }
+    else if(n>100){
+        n=n%SIZE_MAP;
+    }
+    return n;
+}
+
 // mouvement vers la gauche prend en entrée la carte, la position horizontale(x) et la position verticale(y) ainsi que l'entitée qui doit se déplace
 void movement_LEFT(Cell **map, int pos_x, int pos_y, Cell_Content entity, int *quete, Cell_Orientation *orientation)
 {
@@ -26,18 +37,26 @@ void movement_LEFT(Cell **map, int pos_x, int pos_y, Cell_Content entity, int *q
         {
         case CONTENT_MONSTER:
             /* le personnage doit prendre des dégats, mais si c'est un monstre qui va dans un autre monstre, le premier bloque le deuxième */
-            if (entity == CONTENT_MONSTER)
-            {
+            if (entity == CONTENT_MONSTER){
                 return;
             }
-            else
-            {
+            else{
                 // prendre des dégats
             }
             break;
         case CONTENT_FLOWER:
             /* le personnage doit se déplacer normalement, et ramasser les fleurs*/
             break;
+            // le personnage saute cet obstable, et va donc se déplacer de deux cases au lieu d'une seule. si c'est un caisse qui se déplace, alors elle casse la barrière
+        case CONTENT_FENCE:
+            if (entity==CONTENT_CRATE){
+                map[pos_y][equilibre(pos_x - 1)].content = map[pos_y][pos_x].content;
+                map[pos_y][equilibre(pos_x)].content = CONTENT_NOTHING;
+            }
+            else if (map[pos_y][equilibre(pos_x - 2)].content==CONTENT_ROCK || map[pos_y][equilibre(pos_x - 2)].content==CONTENT_PNJ )
+            {
+                return;
+            }
         case CONTENT_ROCK:
             break;
             /* le personnage est bloqué */
@@ -61,19 +80,13 @@ void movement_LEFT(Cell **map, int pos_x, int pos_y, Cell_Content entity, int *q
             }
             break;
 
-        default:
-            if (pos_x - 1 < 0)
-            {
-                map[pos_y][SIZE_MAP - (pos_x - 1)].content = map[pos_y][pos_x].content;
-                map[pos_y][SIZE_MAP - (pos_x)].content = CONTENT_NOTHING;
-            }
-            else
-            {
-                map[pos_y][(pos_x - 1)].content = map[pos_y][pos_x].content;
-                map[pos_y][(pos_x)].content = CONTENT_NOTHING;
-            }
+// Déplacement normal, si on arrive au bord de l'espace de jeu, l'entitée est placée à l'opposé de la carte 
+        default: 
+            map[pos_y][equilibre(pos_x - 1)].content = map[pos_y][pos_x].content;
+            map[pos_y][equilibre(pos_x)].content = CONTENT_NOTHING;
             break;
         }
+    }
 }
 
 void movement_RIGHT() {}
