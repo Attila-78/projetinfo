@@ -7,7 +7,7 @@ OBJ_DIR = obj
 #defines the source directory
 SRC_DIR = src
 # defines executable name 
-EXEC_NAME = MemoryRPG
+EXEC_NAME = Cy-Valley
 
 # get all c files
 SRC=$(wildcard $(SRC_DIR)/*.c)
