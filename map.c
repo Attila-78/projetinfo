@@ -256,50 +256,43 @@ int map_renderer(int **map)
     // crée un moteur de rendu qui permettra d'afficher nos images
     SDL_Renderer *rend = SDL_CreateRenderer(win, -1, render_flags);
 
+    SDL_Surface* ecran = NULL;
+
     // les surfaces que l'on va ici définir représentent les cases que nous afficherons à l'écran :
     // comme nous afficherons une matrice de 3x3, il nous faut une surface par case; huit pour celle sur les cotés et une pour
     // le personnage au centre
-    SDL_Surface *surface_up_left_cell = SDL_CreateRGBSurface (SDL_HWSURFACE, 800, 800, 32, 0, 0, 0, 0);
-    SDL_Surface *surface_up_middle_cell = SDL_CreateRGBSurface (SDL_HWSURFACE, 80, 800, 32, 0, 0, 0, 0);
-    SDL_Surface *surface_up_right_cell = SDL_CreateRGBSurface (SDL_HWSURFACE, 800, 800, 32, 0, 0, 0, 0);
-    SDL_Surface *surface_left_middle_cell = SDL_CreateRGBSurface (SDL_HWSURFACE, 800, 800, 32, 0, 0, 0, 0);
-    SDL_Surface *surface_character = SDL_CreateRGBSurface (SDL_HWSURFACE, 800, 800, 32, 0, 0, 0, 0);
-    SDL_Surface *surface_left_down_cell = SDL_CreateRGBSurface (SDL_HWSURFACE, 800, 800, 32, 0, 0, 0, 0);
-    SDL_Surface *surface_down_middle_cell = SDL_CreateRGBSurface (SDL_HWSURFACE, 800, 800, 32, 0, 0, 0, 0);
-    SDL_Surface *surface_down_right_cell = SDL_CreateRGBSurface (SDL_HWSURFACE, 800, 800, 32, 0, 0, 0, 0);
-    SDL_Surface *surface_right_middle_cell = SDL_CreateRGBSurface (SDL_HWSURFACE, 800, 800, 32, 0, 0, 0, 0);
+
+    SDL_Surface *surface_up_left_cell = SDL_CreateRGBSurface(0, 800, 800, 32, 0, 0, 0, 0);
+    SDL_Surface *surface_up_middle_cell = SDL_CreateRGBSurface(0, 800, 800, 32, 0, 0, 0, 0);
+    SDL_Surface *surface_up_right_cell = SDL_CreateRGBSurface(0, 800, 800, 32, 0, 0, 0, 0);
+    SDL_Surface *surface_left_middle_cell = SDL_CreateRGBSurface(0, 800, 800, 32, 0, 0, 0, 0);
+    SDL_Surface *surface_character = SDL_CreateRGBSurface(0, 800, 800, 32, 0, 0, 0, 0);
+    SDL_Surface *surface_left_down_cell = SDL_CreateRGBSurface(0, 800, 800, 32, 0, 0, 0, 0);
+    SDL_Surface *surface_down_middle_cell = SDL_CreateRGBSurface(0, 800, 800, 32, 0, 0, 0, 0);
+    SDL_Surface *surface_down_right_cell = SDL_CreateRGBSurface(0, 800, 800, 32, 0, 0, 0, 0);
+    SDL_Surface *surface_right_middle_cell = SDL_CreateRGBSurface(0, 800, 800, 32, 0, 0, 0, 0);
 
     //on crée les rectangles dans lesquels nos surfaces iront
-    SDL_Rect *rect_up_left_cell = (400,400,800,800);
-    SDL_Rect *rect_up_middle_cell = (1200,400,800,800);
-    SDL_Rect *rect_up_right_cell = (2000,400,800,800);
-    SDL_Rect *rect_left_middle_cell = (400,1200,800,800);
-    SDL_Rect *rect_left_down_cell = (400,2000,800,800);
-    SDL_Rect *rect_middle_cell = (1200,1200,800,800);
-    SDL_Rect *rect_down_middle_cell = (1200,2000,800,800);
-    SDL_Rect *rect_down_right_cell = (2000,2000,800,800);
-    SDL_Rect *rect_right_middle_cell = (2000,1200,800,800);
+    SDL_Rect rect_up_left_cell = {400,400,800,800};
+    SDL_Rect rect_up_middle_cell = {1200,400,800,800};
+    SDL_Rect rect_up_right_cell = {2000,400,800,800};
+    SDL_Rect rect_left_middle_cell = {400,1200,800,800};
+    SDL_Rect rect_left_down_cell = {400,2000,800,800};
+    SDL_Rect rect_middle_cell = {1200,1200,800,800};
+    SDL_Rect rect_down_middle_cell = {1200,2000,800,800};
+    SDL_Rect rect_down_right_cell = {2000,2000,800,800};
+    SDL_Rect rect_right_middle_cell = {2000,1200,800,800};
 
-    //on assigne nos surfaces aux rectangles correspondant
-    int SDL_BlitSurface(surface_up_left_cell, NULL, surface_up_left_cell, rect_up_left_cell);
-    int SDL_BlitSurface(surface_up_middle_cell, NULL, surface_up_middle_cell, rect_up_middle_cell);
-    int SDL_BlitSurface(surface_up_right_cell, NULL, surface_up_right_cell, rect_up_right_cell);
-    int SDL_BlitSurface(surface_left_middle_cell, NULL, surface_left_middle_cell, rect_left_middle_cell);
-    int SDL_BlitSurface(surface_character, NULL, surface_character, rect_middle_cell);
-    int SDL_BlitSurface(surface_left_down_cell, NULL, surface_left_down_cell, rect_left_down_cell);
-    int SDL_BlitSurface(surface_down_middle_cell, NULL, surface_down_middle_cell, rect_down_middle_cell);
-    int SDL_BlitSurface(surface_down_right_cell, NULL, surface_down_right_cell, rect_down_right_cell);
-    int SDL_BlitSurface(rect_right_middle_cell, NULL, surace_right_middle_cell, rect_right_middle_cell);
+    SDL_BlitSurface(surface_up_left_cell, NULL, ecran, &rect_up_left_cell);
+    SDL_BlitSurface(surface_up_middle_cell, NULL, ecran, &rect_up_middle_cell);
+    SDL_BlitSurface(surface_up_right_cell, NULL, ecran, &rect_up_right_cell);
+    SDL_BlitSurface(surface_left_middle_cell, NULL, ecran, &rect_left_middle_cell);
+    SDL_BlitSurface(surface_character, NULL, ecran, &rect_middle_cell);
+    SDL_BlitSurface(surface_left_down_cell, NULL, ecran, &rect_left_down_cell);
+    SDL_BlitSurface(surface_down_middle_cell, NULL, ecran, &rect_down_middle_cell);
+    SDL_BlitSurface(surface_down_right_cell, NULL, ecran, &rect_down_right_cell);
+    SDL_BlitSurface(surface_right_middle_cell, NULL, ecran, &rect_right_middle_cell);
     
-    *surface_up_left_cell clip_rect =;
-    *surface_up_middle_cell clip_rect =;
-    *surface_up_right_cell clip_rect =;
-    *surface_left_middle_cell clip_rect=;
-    *surface_character clip_rect=;
-    *surface_left_down_cell clip_rect=;
-    *surface_down_middle_cell clip_rect=;
-    *surface_down_right_cell clip_rect=;
-    *surface_right_middle_cell clip_rect=;
 
     // on crée ensuite une surface pour chaque< sprite que l'on pourra afficher. On remplacera les surfaces précédemment citées
     // par celle-ci selon l'emplacement du personnage pour éviter
