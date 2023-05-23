@@ -87,7 +87,6 @@ void movement_LEFT(Cell **map, int pos_x, int pos_y, Cell_Content entity, int *q
             break;
         }
     }
-}
 
 void movement_RIGHT() {}
 
