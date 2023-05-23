@@ -43,6 +43,15 @@ void clamp(int min, int max, int *num)
     }
 }
 
+//fonction qui permettra de définir les coordonnées d'une surface SDL qu'on utilisera pour l'affichage
+void initSDL_Rect(SDL_Rect * pos, int x, int y, unsigned int w, unsigned int h){
+	if(pos == NULL) return;
+	pos->x = x;      //abscisse
+	pos->y = y;     //ordonnées
+	pos->w = w;    //longueur
+	pos->h = h;   //largeur
+}
+
 int **map_generate()
 {
     // allocation dynamique de la matrice
@@ -250,15 +259,15 @@ int map_renderer(int **map)
     // les surfaces que l'on va ici définir représentent les cases que nous afficherons à l'écran :
     // comme nous afficherons une matrice de 3x3, il nous faut une surface par case; huit pour celle sur les cotés et une pour
     // le personnage au centre
-    SDL_Surface *surface_up_left_cell;
-    SDL_Surface *surface_up_middle_cell;
-    SDL_Surface *surface_up_right_cell;
-    SDL_Surface *surface_left_middle_cell;
-    SDL_Surface *surface_character;
-    SDL_Surface *surface_left_down_cell;
-    SDL_Surface *surface_down_middle_cell;
-    SDL_Surface *surface_down_right_cell;
-    SDL_Surface *surface_right_middle_cell;
+    SDL_Surface *surface_up_left_cell = SDL_CreateRGBSurface (SDL_HWSURFACE, 800, 800, 32, 0, 0, 0, 0);
+    SDL_Surface *surface_up_middle_cell = SDL_CreateRGBSurface (SDL_HWSURFACE, 80, 800, 32, 0, 0, 0, 0);
+    SDL_Surface *surface_up_right_cell = SDL_CreateRGBSurface (SDL_HWSURFACE, 800, 800, 32, 0, 0, 0, 0);
+    SDL_Surface *surface_left_middle_cell = SDL_CreateRGBSurface (SDL_HWSURFACE, 800, 800, 32, 0, 0, 0, 0);
+    SDL_Surface *surface_character = SDL_CreateRGBSurface (SDL_HWSURFACE, 800, 800, 32, 0, 0, 0, 0);
+    SDL_Surface *surface_left_down_cell = SDL_CreateRGBSurface (SDL_HWSURFACE, 800, 800, 32, 0, 0, 0, 0);
+    SDL_Surface *surface_down_middle_cell = SDL_CreateRGBSurface (SDL_HWSURFACE, 800, 800, 32, 0, 0, 0, 0);
+    SDL_Surface *surface_down_right_cell = SDL_CreateRGBSurface (SDL_HWSURFACE, 800, 800, 32, 0, 0, 0, 0);
+    SDL_Surface *surface_right_middle_cell = SDL_CreateRGBSurface (SDL_HWSURFACE, 800, 800, 32, 0, 0, 0, 0);
 
     //on crée les rectangles dans lesquels nos surfaces iront
     SDL_Rect *rect_up_left_cell = (400,400,800,800);
@@ -280,7 +289,17 @@ int map_renderer(int **map)
     int SDL_BlitSurface(surface_left_down_cell, NULL, surface_left_down_cell, rect_left_down_cell);
     int SDL_BlitSurface(surface_down_middle_cell, NULL, surface_down_middle_cell, rect_down_middle_cell);
     int SDL_BlitSurface(surface_down_right_cell, NULL, surface_down_right_cell, rect_down_right_cell);
-    int SDL_BlitSurface(rect_right_middle_cell, NULL, rect_right_middle_cell, rect_right_middle_cell);
+    int SDL_BlitSurface(rect_right_middle_cell, NULL, surace_right_middle_cell, rect_right_middle_cell);
+    
+    *surface_up_left_cell clip_rect =;
+    *surface_up_middle_cell clip_rect =;
+    *surface_up_right_cell clip_rect =;
+    *surface_left_middle_cell clip_rect=;
+    *surface_character clip_rect=;
+    *surface_left_down_cell clip_rect=;
+    *surface_down_middle_cell clip_rect=;
+    *surface_down_right_cell clip_rect=;
+    *surface_right_middle_cell clip_rect=;
 
     // on crée ensuite une surface pour chaque< sprite que l'on pourra afficher. On remplacera les surfaces précédemment citées
     // par celle-ci selon l'emplacement du personnage pour éviter
