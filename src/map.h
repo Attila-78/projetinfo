@@ -27,6 +27,7 @@ typedef enum Cell_type
     CELL_MAGMA,
 
     CELL_AMOUNT
+
 } Cell_type;
 
 // énumération des contenus des cases
@@ -55,7 +56,7 @@ typedef struct Cell
 int abs(int x);
 int random_sign(int start);
 void clamp(int min, int max, int *num);
-int map_renderer(int **map);
-int **map_generate();
+int map_renderer(Cell map[SIZE_MAP][SIZE_MAP]);
+void map_generate_cell(Cell map[SIZE_MAP][SIZE_MAP]);
 
 // gcc main.c map.c -o CYValley.exe -I include -L lib -lSDL2main -lSDL2
