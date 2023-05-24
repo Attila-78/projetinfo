@@ -38,8 +38,8 @@ void clamp(int min, int max, int *num)
     }
     if (*num > max)
     {
+
         *num = max;
-        return;
     }
 }
 
@@ -52,96 +52,12 @@ void initSDL_Rect(SDL_Rect * pos, int x, int y, unsigned int w, unsigned int h){
 	pos->h = h;   //largeur
 }
 
-int **map_generate()
+void map_generate_cell(Cell map[SIZE_MAP][SIZE_MAP])
 {
-    // allocation dynamique de la matrice
-    int **map = calloc(1, sizeof(int *) * SIZE_MAP);
-    for (int line = 0; line < SIZE_MAP; line++)
-    {
-        map[line] = calloc(1, sizeof(int) * SIZE_MAP);
-    }
 
     int min, max;
-    // generation aléatoire de la carte
-    for (int line = 0; line < SIZE_MAP; line++)
-    {
-        for (int column = 0; column < SIZE_MAP; column++)
-        {
-            if (column == 0 && line == 0)
-            {
-                // on génère un type de case pour la première case du tableau
-                map[line][column] = rand() % CELL_AMOUNT + 1;
-            }
-            else if (line == 0)
-            {
-                // génération pour une case si il n'y a aucune case au dessus
-                map[line][column] = map[line][column - 1] + random_sign(map[line][column - 1]) * (rand() % EPSILON);
-            }
-            else if (column == 0)
-            {
-                // génération pour une case si il n'y a aucune case à gauche
-                map[line][column] = map[line - 1][column] + random_sign(map[line - 1][column]) * (rand() % EPSILON);
-            }
-            else
-            {
-                // comme avant, même ligne et en haut
-                // impossible de trouver une valeur +/- epsilon pour remplir notre objectif
-                if (abs(map[line - 1][column] - map[line][column - 1]) > EPSILON)
-                {
-                    map[line][column] = (map[line - 1][column] + map[line][column - 1]) / 2;
-                }
-                else
-                {
-                    // ici oui, donc on prends la valeur minimale et on ajoute rand()%EPSILON
-                    if (map[line - 1][column] > map[line][column - 1])
-                    {
-                        min = map[line][column - 1];
-                        max = map[line - 1][column];
-                    }
-                    else
-                    {
-                        min = map[line - 1][column];
-                        max = map[line][column - 1];
-                    }
+    int line, column;
 
-                    if (max == min)
-                    {
-                        map[line][column] = map[line - 1][column] + (rand() % 2 ? 1 : -1) * (rand() % EPSILON);
-                    }
-                    else
-                    {
-                        // on choisis de façon aléatoire où l'on applique epsilon
-                        if (rand() % 2)
-                        {
-                            map[line][column] = max - rand() % EPSILON;
-                        }
-                        else
-                        {
-                            map[line][column] = min + rand() % EPSILON;
-                        }
-                    }
-                }
-            }
-
-            // on borne nos nombres
-            clamp(0, CELL_AMOUNT, &map[line][column]);
-
-            // affichage
-            printf("%d ", map[line][column]);
-        }
-    }
-}
-
-Cell **map_generate_cell()
-{
-    // allocation dynamique de la matrice
-    Cell **map = calloc(1, sizeof(Cell *) * SIZE_MAP);
-    for (int line = 0; line < SIZE_MAP; line++)
-    {
-        map[line] = calloc(1, sizeof(Cell) * SIZE_MAP);
-    }
-
-    int min, max;
     // generation aléatoire de la carte
     for (int line = 0; line < SIZE_MAP; line++)
     {
@@ -156,6 +72,7 @@ Cell **map_generate_cell()
             {
                 // génération pour une case si il n'y a aucune case au dessus
                 map[line][column].type = map[line][column - 1].type + random_sign(map[line][column - 1].type) * (rand() % EPSILON);
+    
             }
             else if (column == 0)
             {
@@ -212,8 +129,9 @@ Cell **map_generate_cell()
     }
 }
 
+
 // fonction générant la carte aléatoirement et l'affichant
-int map_renderer(int **map)
+int map_renderer(Cell map[SIZE_MAP][SIZE_MAP])
 {
     // on vérifie que le pointeur n'est pas nul pour être sûr qu'il n'y ai pas de segmentation fault
     if (map == NULL)
@@ -238,10 +156,7 @@ int map_renderer(int **map)
     }
 
     // créer une fenêtre de jeu "Cy-Valley"
-    SDL_Window *win = SDL_CreateWindow("Cy-Valley",
-                                       SDL_WINDOWPOS_CENTERED,
-                                       SDL_WINDOWPOS_CENTERED,
-                                       SDL_WINDOW_FULLSCREEN_DESKTOP, SDL_WINDOW_FULLSCREEN_DESKTOP, SDL_WINDOW_ALLOW_HIGHDPI);
+    SDL_Window *win = SDL_CreateWindow("Cy-Valley", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, SDL_WINDOW_FULLSCREEN_DESKTOP, SDL_WINDOW_FULLSCREEN_DESKTOP, SDL_WINDOW_ALLOW_HIGHDPI);
 
     // Crée un message d'erreur si la fenêtre ne c'est pas bien crée
     if (win == NULL)
@@ -291,8 +206,7 @@ int map_renderer(int **map)
     SDL_BlitSurface(surface_left_down_cell, NULL, ecran, &rect_left_down_cell);
     SDL_BlitSurface(surface_down_middle_cell, NULL, ecran, &rect_down_middle_cell);
     SDL_BlitSurface(surface_down_right_cell, NULL, ecran, &rect_down_right_cell);
-    SDL_BlitSurface(surface_right_middle_cell, NULL, ecran, &rect_right_middle_cell);
-    
+    SDL_BlitSurface(surface_right_middle_cell, NULL, ecran, &rect_right_middle_cell);    
 
     // on crée ensuite une surface pour chaque< sprite que l'on pourra afficher. On remplacera les surfaces précédemment citées
     // par celle-ci selon l'emplacement du personnage pour éviter
@@ -371,7 +285,8 @@ int map_renderer(int **map)
     }
     if (surface_character_back_second_step == NULL)
     {
-        printf("Couldn't load surface_character_back_second_step\n");
+        printf("Couldn't load surface_character_back_second_step\n");	
+
         exit(1);
     }
     if (surface_character_back_third_step == NULL)
@@ -421,31 +336,31 @@ int map_renderer(int **map)
     }
 
     // On commence par la case en haut à gauche : on remplace la surface y correspondant par la case  qui s'y trouve relativement à la position du personnage
-    if (map[line_position - 1][column_position - 1] == 0)
+    if (map[line_position - 1][column_position - 1].type = CELL_GRASS)
     {
         surface_up_left_cell = surface_Cell_Grass;
     }
-    else if (map[line_position - 1][column_position - 1] == 1)
+    else if (map[line_position - 1][column_position - 1].type == CELL_DIRT)
     {
         surface_up_left_cell = surface_Cell_Dirt;
     }
-    else if (map[line_position - 1][column_position - 1] == 2)
+    else if (map[line_position - 1][column_position - 1].type  == CELL_WATER)
     {
         surface_up_left_cell = surface_Cell_Water;
     }
-    else if (map[line_position - 1][column_position - 1] == 3)
+    else if (map[line_position - 1][column_position - 1].type  == CELL_SNOW)
     {
         surface_up_left_cell = surface_Cell_Snow;
     }
-    else if (map[line_position - 1][column_position - 1] == 4)
+    else if (map[line_position - 1][column_position - 1].type  == CELL_ROCK)
     {
         surface_up_left_cell = surface_Cell_Rock;
     }
-    else if (map[line_position - 1][column_position - 1] == 5)
+    else if (map[line_position - 1][column_position - 1].type  == CELL_SAND)
     {
         surface_up_left_cell = surface_Cell_Sand;
     }
-    else if (map[line_position - 1][column_position - 1] == 6)
+    else if (map[line_position - 1][column_position - 1].type  == CELL_MUD)	
     {
         surface_up_left_cell = surface_Cell_Mud;
     }
@@ -455,31 +370,31 @@ int map_renderer(int **map)
     }
 
     // de même pour la case à gauche
-    if (map[line_position][column_position - 1] == 0)
+    if (map[line_position][column_position - 1].type  == CELL_GRASS)
     {
         surface_left_middle_cell = surface_Cell_Grass;
     }
-    else if (map[line_position][column_position - 1] == 1)
+    else if (map[line_position][column_position - 1].type  == CELL_DIRT)
     {
         surface_left_middle_cell = surface_Cell_Dirt;
     }
-    else if (map[line_position][column_position - 1] == 2)
+    else if (map[line_position][column_position - 1].type  == CELL_WATER)
     {
         surface_left_middle_cell = surface_Cell_Water;
     }
-    else if (map[line_position][column_position - 1] == 3)
+    else if (map[line_position][column_position - 1].type  == CELL_SNOW)
     {
         surface_left_middle_cell = surface_Cell_Snow;
     }
-    else if (map[line_position][column_position - 1] == 4)
+    else if (map[line_position][column_position - 1].type  == CELL_ROCK)
     {
         surface_left_middle_cell = surface_Cell_Rock;
     }
-    else if (map[line_position][column_position - 1] == 5)
+    else if (map[line_position][column_position - 1].type  == CELL_SAND)
     {
         surface_left_middle_cell = surface_Cell_Sand;
     }
-    else if (map[line_position][column_position - 1] == 6)
+    else if (map[line_position][column_position - 1].type  == CELL_MUD)
     {
         surface_left_middle_cell = surface_Cell_Mud;
     }
@@ -489,31 +404,31 @@ int map_renderer(int **map)
     }
 
     // de même pour la case en bas à gauche
-    if (map[line_position + 1][column_position - 1] == 0)
+    if (map[line_position + 1][column_position - 1].type  == CELL_GRASS)
     {
         surface_left_down_cell = surface_Cell_Grass;
-    }
-    else if (map[line_position + 1][column_position - 1] == 1)
+    } 
+    else if (map[line_position + 1][column_position - 1].type  == CELL_DIRT)
     {
         surface_left_down_cell = surface_Cell_Dirt;
     }
-    else if (map[line_position + 1][column_position - 1] == 2)
+    else if (map[line_position + 1][column_position - 1].type  == CELL_WATER)
     {
         surface_left_down_cell = surface_Cell_Water;
     }
-    else if (map[line_position + 1][column_position - 1] == 3)
+    else if (map[line_position + 1][column_position - 1].type  == CELL_SNOW)
     {
         surface_left_down_cell = surface_Cell_Snow;
     }
-    else if (map[line_position + 1][column_position - 1] == 4)
+    else if (map[line_position + 1][column_position - 1].type  == CELL_ROCK)
     {
         surface_left_down_cell = surface_Cell_Rock;
     }
-    else if (map[line_position + 1][column_position - 1] == 5)
+    else if (map[line_position + 1][column_position - 1].type  == CELL_SAND)
     {
         surface_left_down_cell = surface_Cell_Sand;
     }
-    else if (map[line_position + 1][column_position - 1] == 6)
+    else if (map[line_position + 1][column_position - 1].type  == CELL_MUD)
     {
         surface_left_down_cell = surface_Cell_Mud;
     }
@@ -523,31 +438,31 @@ int map_renderer(int **map)
     }
 
     // de même pour la case en bas
-    if (map[line_position + 1][column_position] == 0)
+    if (map[line_position + 1][column_position].type  == CELL_GRASS)
     {
         surface_down_middle_cell = surface_Cell_Grass;
     }
-    else if (map[line_position + 1][column_position] == 1)
+    else if (map[line_position + 1][column_position].type  == CELL_DIRT)
     {
         surface_down_middle_cell = surface_Cell_Dirt;
     }
-    else if (map[line_position + 1][column_position] == 2)
+    else if (map[line_position + 1][column_position].type  == CELL_WATER)
     {
         surface_down_middle_cell = surface_Cell_Water;
     }
-    else if (map[line_position + 1][column_position] == 3)
+    else if (map[line_position + 1][column_position].type  == CELL_SNOW)
     {
         surface_down_middle_cell = surface_Cell_Snow;
     }
-    else if (map[line_position + 1][column_position] == 4)
+    else if (map[line_position + 1][column_position].type  == CELL_ROCK)
     {
         surface_down_middle_cell = surface_Cell_Rock;
     }
-    else if (map[line_position + 1][column_position] == 5)
+    else if (map[line_position + 1][column_position].type  == CELL_SAND)
     {
         surface_down_middle_cell = surface_Cell_Sand;
     }
-    else if (map[line_position + 1][column_position] == 6)
+    else if (map[line_position + 1][column_position].type  == CELL_MUD)
     {
         surface_down_middle_cell = surface_Cell_Mud;
     }
@@ -556,32 +471,31 @@ int map_renderer(int **map)
         surface_left_middle_cell = surface_Cell_Magma;
     }
 
-    // de même pour la case en bas à droite
-    if (map[line_position + 1][column_position + 1] == 0)
-    {
+    // de même pour la case en bas à droite.type e  == 0)
+    if (map[line_position + 1][column_position + 1].type  == CELL_GRASS){
         surface_down_right_cell = surface_Cell_Grass;
     }
-    else if (map[line_position + 1][column_position + 1] == 1)
+    else if (map[line_position + 1][column_position + 1].type  == CELL_DIRT)
     {
         surface_down_right_cell = surface_Cell_Dirt;
     }
-    else if (map[line_position + 1][column_position + 1] == 2)
+    else if (map[line_position + 1][column_position + 1].type  == CELL_WATER)
     {
         surface_down_right_cell = surface_Cell_Water;
     }
-    else if (map[line_position + 1][column_position + 1] == 3)
+    else if (map[line_position + 1][column_position + 1].type  == CELL_SNOW)
     {
         surface_down_right_cell = surface_Cell_Snow;
     }
-    else if (map[line_position + 1][column_position + 1] == 4)
+    else if (map[line_position + 1][column_position + 1].type  == CELL_ROCK)
     {
         surface_down_right_cell = surface_Cell_Rock;
     }
-    else if (map[line_position + 1][column_position + 1] == 5)
+    else if (map[line_position + 1][column_position + 1].type  == CELL_SAND)
     {
         surface_down_right_cell = surface_Cell_Sand;
     }
-    else if (map[line_position + 1][column_position + 1] == 6)
+    else if (map[line_position + 1][column_position + 1].type  == CELL_MUD)
     {
         surface_down_right_cell = surface_Cell_Mud;
     }
@@ -591,31 +505,31 @@ int map_renderer(int **map)
     }
 
     // de même pour la case à droite
-    if (map[line_position][column_position + 1] == 0)
+    if (map[line_position][column_position + 1].type  = CELL_GRASS)
     {
         surface_right_middle_cell = surface_Cell_Grass;
     }
-    else if (map[line_position][column_position + 1] == 1)
+    else if (map[line_position][column_position + 1].type  == CELL_DIRT)
     {
         surface_right_middle_cell = surface_Cell_Dirt;
     }
-    else if (map[line_position][column_position + 1] == 2)
+    else if (map[line_position][column_position + 1].type  == CELL_WATER)
     {
         surface_right_middle_cell = surface_Cell_Water;
     }
-    else if (map[line_position][column_position + 1] == 3)
+    else if (map[line_position][column_position + 1].type  == CELL_SNOW)
     {
         surface_right_middle_cell = surface_Cell_Snow;
     }
-    else if (map[line_position][column_position + 1] == 4)
+    else if (map[line_position][column_position + 1].type  == CELL_ROCK)
     {
         surface_right_middle_cell = surface_Cell_Rock;
     }
-    else if (map[line_position][column_position + 1] == 5)
+    else if (map[line_position][column_position + 1].type  == CELL_SAND)
     {
         surface_right_middle_cell = surface_Cell_Sand;
     }
-    else if (map[line_position][column_position + 1] == 6)
+    else if (map[line_position][column_position + 1].type  == CELL_MUD)
     {
         surface_right_middle_cell = surface_Cell_Mud;
     }
@@ -625,31 +539,31 @@ int map_renderer(int **map)
     }
 
     // de même pour la case en haut à droite
-    if (map[line_position - 1][column_position + 1] == 0)
+    if (map[line_position - 1][column_position + 1].type  == CELL_GRASS)
     {
         surface_up_right_cell = surface_Cell_Grass;
     }
-    else if (map[line_position - 1][column_position + 1] == 1)
+    else if (map[line_position - 1][column_position + 1].type  == CELL_DIRT)
     {
         surface_up_right_cell = surface_Cell_Dirt;
     }
-    else if (map[line_position - 1][column_position + 1] == 2)
+    else if (map[line_position - 1][column_position + 1].type  == CELL_WATER)
     {
         surface_up_right_cell = surface_Cell_Water;
     }
-    else if (map[line_position - 1][column_position + 1] == 3)
+    else if (map[line_position - 1][column_position + 1].type  == CELL_SNOW)
     {
         surface_up_right_cell = surface_Cell_Snow;
     }
-    else if (map[line_position - 1][column_position + 1] == 4)
+    else if (map[line_position - 1][column_position+ 1].type  == CELL_ROCK)
     {
         surface_up_right_cell = surface_Cell_Rock;
     }
-    else if (map[line_position - 1][column_position + 1] == 5)
+    else if (map[line_position - 1][column_position + 1].type  == CELL_SAND)
     {
         surface_up_right_cell = surface_Cell_Sand;
     }
-    else if (map[line_position - 1][column_position + 1] == 6)
+    else if (map[line_position - 1][column_position + 1].type  == CELL_MUD)
     {
         surface_up_right_cell = surface_Cell_Mud;
     }
@@ -659,31 +573,31 @@ int map_renderer(int **map)
     }
 
     // de même pour la case en haut
-    if (map[line_position - 1][column_position] == 0)
+    if (map[line_position - 1][column_position].type  == CELL_GRASS)
     {
         surface_up_middle_cell = surface_Cell_Grass;
     }
-    else if (map[line_position - 1][column_position] == 1)
+    else if (map[line_position - 1][column_position].type  == CELL_DIRT)
     {
         surface_up_middle_cell = surface_Cell_Dirt;
     }
-    else if (map[line_position - 1][column_position] == 2)
+    else if (map[line_position - 1][column_position].type  == CELL_WATER)
     {
         surface_up_middle_cell = surface_Cell_Water;
     }
-    else if (map[line_position - 1][column_position] == 3)
+    else if (map[line_position - 1][column_position].type  == CELL_SNOW)
     {
         surface_up_middle_cell = surface_Cell_Snow;
     }
-    else if (map[line_position - 1][column_position] == 4)
+    else if (map[line_position - 1][column_position].type  == CELL_ROCK)
     {
         surface_up_middle_cell = surface_Cell_Rock;
     }
-    else if (map[line_position - 1][column_position] == 5)
+    else if (map[line_position - 1][column_position].type  == CELL_SAND)
     {
         surface_up_middle_cell = surface_Cell_Sand;
     }
-    else if (map[line_position - 1][column_position] == 6)
+    else if (map[line_position - 1][column_position].type  == CELL_MUD)
     {
         surface_up_middle_cell = surface_Cell_Mud;
     }
@@ -701,39 +615,6 @@ int map_renderer(int **map)
 
     // charge l'image dans notre mémoire graphique
     SDL_Texture *tex = SDL_CreateTextureFromSurface(rend, surface_character);
-
-    // efface les surfaces utilisées
-    SDL_FreeSurface(surface_character);
-    SDL_FreeSurface(surface_left_down_cell);
-    SDL_FreeSurface(surface_left_middle_cell);
-    SDL_FreeSurface(surface_up_left_cell);
-    SDL_FreeSurface(surface_up_middle_cell);
-    SDL_FreeSurface(surface_up_right_cell);
-    SDL_FreeSurface(surface_right_middle_cell);
-    SDL_FreeSurface(surface_down_right_cell);
-    SDL_FreeSurface(surface_down_middle_cell);
-
-    SDL_FreeSurface(surface_Cell_Grass);
-    SDL_FreeSurface(surface_Cell_Dirt);
-    SDL_FreeSurface(surface_Cell_Water);
-    SDL_FreeSurface(surface_Cell_Snow);
-    SDL_FreeSurface(surface_Cell_Rock);
-    SDL_FreeSurface(surface_Cell_Sand);
-    SDL_FreeSurface(surface_Cell_Mud);
-    SDL_FreeSurface(surface_Cell_Magma);
-
-    SDL_FreeSurface(surface_character_front_first_step);
-    SDL_FreeSurface(surface_character_front_second_step);
-    SDL_FreeSurface(surface_character_front_third_step);
-    SDL_FreeSurface(surface_character_left_first_step);
-    SDL_FreeSurface(surface_character_left_second_step);
-    SDL_FreeSurface(surface_character_left_third_step);
-    SDL_FreeSurface(surface_character_right_first_step);
-    SDL_FreeSurface(surface_character_right_second_step);
-    SDL_FreeSurface(surface_character_right_third_step);
-    SDL_FreeSurface(surface_character_back_first_step);
-    SDL_FreeSurface(surface_character_back_second_step);
-    SDL_FreeSurface(surface_character_back_third_step);
 
     // let us control our image position
     // so that we can move it with our keyboard.
@@ -862,6 +743,39 @@ int map_renderer(int **map)
         SDL_Delay(1000 / 60);
     }
 
+    // efface les surfaces utilisées
+    SDL_FreeSurface(surface_character);
+    SDL_FreeSurface(surface_left_down_cell);
+    SDL_FreeSurface(surface_left_middle_cell);
+    SDL_FreeSurface(surface_up_left_cell);
+    SDL_FreeSurface(surface_up_middle_cell);
+    SDL_FreeSurface(surface_up_right_cell);
+    SDL_FreeSurface(surface_right_middle_cell);
+    SDL_FreeSurface(surface_down_right_cell);
+    SDL_FreeSurface(surface_down_middle_cell);
+        
+    SDL_FreeSurface(surface_Cell_Grass);
+    SDL_FreeSurface(surface_Cell_Dirt);
+    SDL_FreeSurface(surface_Cell_Water);
+    SDL_FreeSurface(surface_Cell_Snow);
+    SDL_FreeSurface(surface_Cell_Rock);
+    SDL_FreeSurface(surface_Cell_Sand);
+    SDL_FreeSurface(surface_Cell_Mud);
+    SDL_FreeSurface(surface_Cell_Magma);
+
+    SDL_FreeSurface(surface_character_front_first_step);
+    SDL_FreeSurface(surface_character_front_second_step);
+    SDL_FreeSurface(surface_character_front_third_step);
+    SDL_FreeSurface(surface_character_left_first_step);
+    SDL_FreeSurface(surface_character_left_second_step);
+    SDL_FreeSurface(surface_character_left_third_step);
+    SDL_FreeSurface(surface_character_right_first_step);
+    SDL_FreeSurface(surface_character_right_second_step);
+    SDL_FreeSurface(surface_character_right_third_step);
+    SDL_FreeSurface(surface_character_back_first_step);
+    SDL_FreeSurface(surface_character_back_second_step);
+    SDL_FreeSurface(surface_character_back_third_step);
+
     // détruit
     SDL_DestroyTexture(tex);
 
@@ -874,3 +788,4 @@ int map_renderer(int **map)
     // ferme sdl
     SDL_Quit();
 }
+
