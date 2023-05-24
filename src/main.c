@@ -11,20 +11,15 @@ int main(int argc, char *argv[])
     srand(time(NULL));
 
     // On définit le double pointeur pointant vers matrice de 100x100
-    int **map_matrix = map_generate();
+    Cell map_matrix[SIZE_MAP][SIZE_MAP];
+
+    map_generate_cell(map_matrix);
 
     // generation
     if (!map_renderer(map_matrix))
     {
         printf("Il y a eu une erreur.\n");
     }
-
-    // on libère l'espace utilisé
-    for (int line = 0; line < SIZE_MAP; line++)
-    {
-        free(map_matrix[line]);
-    }
-    free(map_matrix);
 
     return 0;
 }
